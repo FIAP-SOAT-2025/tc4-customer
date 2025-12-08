@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: customer-mongodb
+    ports:
+      - "${MONGODB_PORT:-27017}:27017"
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGODB_DATABASE:-customer_db}
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - customer-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  customer-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: customer-service
+    ports:
+      - "${PORT:-8080}:${PORT:-8080}"
+    environment:
+      MONGODB_URI: ${MONGODB_URI:-mongodb://mongodb:27017}
+      MONGODB_DATABASE: ${MONGODB_DATABASE:-customer_db}
+      PORT: ${PORT:-8080}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - customer-network
+    restart: unless-stopped
+
+networks:
+  customer-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
