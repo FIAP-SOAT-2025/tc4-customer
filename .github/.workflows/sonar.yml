@@ -1,4 +1,4 @@
-name: CI - SonarCloud Scan
+name: CI - SonarCloud (Go)
 
 on:
   push:
@@ -8,7 +8,6 @@ on:
 
 jobs:
   sonarcloud:
-    name: Analyze with SonarCloud
     runs-on: ubuntu-latest
 
     steps:
@@ -17,27 +16,27 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
         with:
-          node-version: 20
+          go-version: '1.22'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Download dependencies
+        run: go mod download
 
       - name: Run tests with coverage
-        run: npm test -- --coverage
+        run: |
+          go test ./... -coverprofile=coverage.out
+          go tool cover -func=coverage.out
 
       - name: Debug coverage file
         run: |
-          echo "Verificando se a pasta coverage existe:"
-          ls -la coverage || echo "Pasta coverage não encontrada"
-
-          echo "Primeiras linhas do arquivo lcov.info (se existir):"
-          head coverage/lcov.info || echo "Arquivo lcov.info não encontrado"
+          ls -la
+          echo "Coverage preview:"
+          head -n 20 coverage.out
 
       - name: Run SonarCloud analysis
-        uses: SonarSource/sonarcloud-github-action@b42848bfdabac7fefc656c08af7a7864240124a3
+        uses: SonarSource/sonarcloud-github-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
@@ -45,9 +44,7 @@ jobs:
           args: >
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-            -Dsonar.sources=src
-            -Dsonar.tests=src/payments/test
-            -Dsonar.test.inclusions=src/payments/test/**/*.spec.ts
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-            -Dsonar.exclusions=node_modules/**,dist/**,coverage/**
-            -Dsonar.coverage.exclusions=**/*.spec.ts,src/main.ts
+            -Dsonar.sources=api,internal,pkg
+            -Dsonar.exclusions=**/*_test.go
+            -Dsonar.go.coverage.reportPaths=coverage.out
+            -Dsonar.verbose=true
