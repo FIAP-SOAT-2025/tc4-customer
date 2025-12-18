@@ -9,10 +9,10 @@ import (
 )
 
 type CustomerHandler struct {
-	createUseCase      *usecase.CreateCustomerUseCase
-	getByCPFUseCase    *usecase.GetCustomerByCPFUseCase
-	updateUseCase      *usecase.UpdateCustomerUseCase
-	deleteUseCase      *usecase.DeleteCustomerUseCase
+	createUseCase   *usecase.CreateCustomerUseCase
+	getByCPFUseCase *usecase.GetCustomerByCPFUseCase
+	updateUseCase   *usecase.UpdateCustomerUseCase
+	deleteUseCase   *usecase.DeleteCustomerUseCase
 }
 
 func NewCustomerHandler(

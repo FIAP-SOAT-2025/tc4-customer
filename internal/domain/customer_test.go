@@ -8,12 +8,12 @@ import (
 
 func TestNewCustomer(t *testing.T) {
 	tests := []struct {
-		name        string
+		name         string
 		customerName string
-		cpf         string
-		email       string
-		expectError bool
-		errorCode   string
+		cpf          string
+		email        string
+		expectError  bool
+		errorCode    string
 	}{
 		{
 			name:         "Valid customer",
