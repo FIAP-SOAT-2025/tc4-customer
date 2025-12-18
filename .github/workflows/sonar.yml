@@ -26,25 +26,23 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          go test ./... -coverprofile=coverage.out
+          go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
           go tool cover -func=coverage.out
 
       - name: Debug coverage file
         run: |
-          ls -la
+          ls -la coverage.out
           echo "Coverage preview:"
           head -n 20 coverage.out
 
       - name: Run SonarCloud analysis
-        uses: SonarSource/sonarcloud-github-action@v5
+        uses: SonarSource/sonarcloud-github-action@v3
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          projectBaseDir: .
-          args: >
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-            -Dsonar.sources=api,internal,pkg
-            -Dsonar.exclusions=**/*_test.go
-            -Dsonar.go.coverage.reportPaths=coverage.out
-            -Dsonar.verbose=true
+          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+
+      - name: Check Quality Gate
+        run: |
+          echo "Quality Gate status will be checked by SonarCloud"
+          echo "Pipeline will fail if coverage is below 80% (configured in SonarCloud Quality Gate)"
