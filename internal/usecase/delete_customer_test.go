@@ -10,47 +10,54 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestGetCustomerByCPFUseCase_Execute(t *testing.T) {
+func TestDeleteCustomerUseCase_Execute(t *testing.T) {
 	tests := []struct {
 		name          string
-		cpf           string
+		customerID    string
 		mockSetup     func(*MockCustomerRepository)
 		expectError   bool
 		expectedError string
 	}{
 		{
-			name: "Successfully get customer by CPF",
-			cpf:  "11144477735",
+			name:       "Successfully delete customer",
+			customerID: "123",
 			mockSetup: func(m *MockCustomerRepository) {
 				customer, _ := domain.NewCustomer("John Doe", "11144477735", "john@example.com")
-				m.On("FindByCPF", mock.Anything, "11144477735").
+				m.On("FindByID", mock.Anything, "123").
 					Return(customer, nil)
+				m.On("Delete", mock.Anything, "123").
+					Return(nil)
 			},
 			expectError: false,
 		},
 		{
-			name: "Customer not found",
-			cpf:  "11144477735",
+			name:       "Customer not found",
+			customerID: "999",
 			mockSetup: func(m *MockCustomerRepository) {
-				m.On("FindByCPF", mock.Anything, "11144477735").
+				m.On("FindByID", mock.Anything, "999").
 					Return(nil, nil)
 			},
 			expectError:   true,
 			expectedError: "CUSTOMER_NOT_FOUND",
 		},
 		{
-			name:          "Invalid CPF",
-			cpf:           "invalid",
-			mockSetup:     func(m *MockCustomerRepository) {},
-			expectError:   true,
-			expectedError: "INVALID_CPF",
+			name:       "FindByID returns error",
+			customerID: "123",
+			mockSetup: func(m *MockCustomerRepository) {
+				m.On("FindByID", mock.Anything, "123").
+					Return(nil, errors.NewInternalError("database error"))
+			},
+			expectError: true,
 		},
 		{
-			name: "FindByCPF returns error",
-			cpf:  "11144477735",
+			name:       "Delete returns error",
+			customerID: "123",
 			mockSetup: func(m *MockCustomerRepository) {
-				m.On("FindByCPF", mock.Anything, "11144477735").
-					Return(nil, errors.NewInternalError("database error"))
+				customer, _ := domain.NewCustomer("John Doe", "11144477735", "john@example.com")
+				m.On("FindByID", mock.Anything, "123").
+					Return(customer, nil)
+				m.On("Delete", mock.Anything, "123").
+					Return(errors.NewInternalError("delete failed"))
 			},
 			expectError: true,
 		},
@@ -61,12 +68,11 @@ func TestGetCustomerByCPFUseCase_Execute(t *testing.T) {
 			mockRepo := new(MockCustomerRepository)
 			tt.mockSetup(mockRepo)
 
-			uc := NewGetCustomerByCPFUseCase(mockRepo)
-			customer, err := uc.Execute(context.Background(), tt.cpf)
+			uc := NewDeleteCustomerUseCase(mockRepo)
+			err := uc.Execute(context.Background(), tt.customerID)
 
 			if tt.expectError {
 				assert.Error(t, err)
-				assert.Nil(t, customer)
 				if tt.expectedError != "" {
 					appErr, ok := err.(*errors.AppError)
 					assert.True(t, ok)
@@ -74,7 +80,6 @@ func TestGetCustomerByCPFUseCase_Execute(t *testing.T) {
 				}
 			} else {
 				assert.NoError(t, err)
-				assert.NotNil(t, customer)
 			}
 
 			mockRepo.AssertExpectations(t)

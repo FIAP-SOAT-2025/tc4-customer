@@ -110,6 +110,30 @@ func TestCreateCustomerUseCase_Execute(t *testing.T) {
 			mockSetup:    func(m *MockCustomerRepository) {},
 			expectError:  true,
 		},
+		{
+			name:         "FindByCPFOrEmail returns error",
+			customerName: "John Doe",
+			cpf:          "11144477735",
+			email:        "john@example.com",
+			mockSetup: func(m *MockCustomerRepository) {
+				m.On("FindByCPFOrEmail", mock.Anything, mock.Anything, mock.Anything).
+					Return(nil, errors.NewInternalError("database error"))
+			},
+			expectError: true,
+		},
+		{
+			name:         "Create returns error",
+			customerName: "John Doe",
+			cpf:          "11144477735",
+			email:        "john@example.com",
+			mockSetup: func(m *MockCustomerRepository) {
+				m.On("FindByCPFOrEmail", mock.Anything, mock.Anything, mock.Anything).
+					Return(nil, nil)
+				m.On("Create", mock.Anything, mock.Anything).
+					Return(errors.NewInternalError("create failed"))
+			},
+			expectError: true,
+		},
 	}
 
 	for _, tt := range tests {
