@@ -36,7 +36,7 @@ jobs:
           head -n 20 coverage.out
 
       - name: Run SonarCloud analysis
-        uses: SonarSource/sonarcloud-github-action@v4
+        uses: SonarSource/sonarcloud-github-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
