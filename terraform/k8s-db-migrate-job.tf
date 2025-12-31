@@ -19,7 +19,7 @@ spec:
         command: ['sh', '-c', 'until nc -z mongodb-service.tc4-customer.svc.cluster.local 27017; do echo waiting for mongodb; sleep 2; done;']
       containers:
       - name: tc4-customer-seed-db
-        image: tlnob/fiap-tc4:latest
+        image: tlnob/tc4-customer:latest
         imagePullPolicy: IfNotPresent
         command: ["./customer-service", "seed"]
         envFrom:

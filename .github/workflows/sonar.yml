@@ -39,6 +39,6 @@ jobs:
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
             -Dsonar.sources=api,internal,pkg
-            -Dsonar.exclusions=**/*_test.go,terraform/**/*,**/*.tf,**/*.tfvars,.github/**/*
+            -Dsonar.exclusions=**/*_test.go,terraform/**/*,**/*.tf,**/*.tfvars,.github/**/*,**/seed.go
             -Dsonar.go.coverage.reportPaths=coverage.out
             -Dsonar.verbose=true

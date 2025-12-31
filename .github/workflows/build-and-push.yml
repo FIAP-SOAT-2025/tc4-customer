@@ -32,7 +32,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: tlnob/fiap-tc4
+          images: tlnob/tc4-customer
           tags: |
             type=ref,event=branch
             type=ref,event=pr,prefix=pr-
