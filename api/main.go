@@ -42,8 +42,19 @@ func main() {
 
 	log.Println("Successfully connected to MongoDB")
 
-	// Initialize database and repository
+	// Initialize database
 	db := client.Database(dbName)
+
+	// Check if running seed command
+	if len(os.Args) > 1 && os.Args[1] == "seed" {
+		if err := runSeed(db); err != nil {
+			log.Fatalf("Seed failed: %v", err)
+		}
+		log.Println("Seed completed successfully")
+		return
+	}
+
+	// Initialize repository
 	customerRepo := repository.NewMongoDBCustomerRepository(db)
 
 	// Initialize use cases

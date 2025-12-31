@@ -32,3 +32,10 @@ go.work
 # Compiled binary
 /bin/
 customer-service-go
+
+# Terraform
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/terraform.tfvars
