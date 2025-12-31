@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
       - name: tc4-customer-api
-        image: tlnob/tc4-customer:latest
+        image: tlnob/fiap-tc4:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
