@@ -47,7 +47,7 @@ jobs:
 
   # Test job
   test:
-    name: Test
+    name: Test & Coverage
     runs-on: ubuntu-latest
 
     steps:
