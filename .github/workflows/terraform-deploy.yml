@@ -17,7 +17,7 @@ on:
 env:
   AWS_REGION: us-east-1
   TF_VERSION: 1.13.3
-  EKS_CLUSTER_NAME: eks-tc4-lanchonete-customer-v1
+  EKS_CLUSTER_NAME: eks-tc4-lanchonete-v1-v1
 
 jobs:
   terraform-plan:
