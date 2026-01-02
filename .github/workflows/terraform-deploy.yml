@@ -20,10 +20,55 @@ env:
   EKS_CLUSTER_NAME: eks-tc4-lanchonete-customer-v1
 
 jobs:
+  terraform-plan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    defaults:
+      run:
+        working-directory: ./terraform
+    env:
+      TF_VAR_mongo_user: ${{ secrets.MONGO_USER }}
+      TF_VAR_mongo_password: ${{ secrets.MONGO_PASSWORD }}
+      TF_VAR_mongo_db_name: ${{ secrets.MONGO_DB_NAME }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.28.0'
+
+      - name: Configure kubectl
+        run: |
+          aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+          kubectl get nodes
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan -no-color
+
   terraform-apply:
     name: Customer API Deploy
     runs-on: ubuntu-latest
-    if: github.event.inputs.action == 'apply'
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'apply'
     defaults:
       run:
         working-directory: ./terraform
@@ -120,7 +165,7 @@ jobs:
   terraform-destroy:
     name: Customer API Destroy
     runs-on: ubuntu-latest
-    if: github.event.inputs.action == 'destroy'
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'destroy'
     defaults:
       run:
         working-directory: ./terraform
