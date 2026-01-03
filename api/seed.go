@@ -17,7 +17,6 @@ func runSeed(db *mongo.Database) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	// Sample customers to seed
 	seedCustomers := []struct {
 		name  string
 		cpf   string
@@ -25,17 +24,17 @@ func runSeed(db *mongo.Database) error {
 	}{
 		{
 			name:  "Ana Souza",
-			cpf:   "45678901234",
+			cpf:   "52998224725",
 			email: "ana.souza@email.com",
 		},
 		{
 			name:  "Carlos Mendes",
-			cpf:   "56789012345",
+			cpf:   "11144477735",
 			email: "carlos.mendes@email.com",
 		},
 		{
 			name:  "Beatriz Lima",
-			cpf:   "167890123456",
+			cpf:   "98765432100",
 			email: "beatriz.lima@email.com",
 		},
 	}

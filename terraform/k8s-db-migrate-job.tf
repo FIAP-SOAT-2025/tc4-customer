@@ -1,6 +1,6 @@
 resource "kubectl_manifest" "db_seed_job" {
   depends_on = [
-    kubectl_manifest.mongodb_statefulset,
+    kubectl_manifest.mongodb_deployment,
     kubectl_manifest.secrets,
     kubectl_manifest.configmap
   ]

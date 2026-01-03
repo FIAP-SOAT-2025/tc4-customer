@@ -1,11 +1,20 @@
 resource "kubectl_manifest" "deployment" {
   depends_on = [
     kubernetes_namespace.lanchonete_ns,
-    kubectl_manifest.mongodb_statefulset,
+    kubectl_manifest.mongodb_deployment,
     kubectl_manifest.db_seed_job,
     kubectl_manifest.secrets,
     kubectl_manifest.configmap
   ]
+
+  override_namespace = "tc4-customer"
+  wait               = true
+  wait_for_rollout   = true
+
+  timeouts {
+    create = "10m"
+  }
+
   yaml_body = <<YAML
 apiVersion: apps/v1
 kind: Deployment
