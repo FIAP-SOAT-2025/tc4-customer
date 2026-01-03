@@ -5,7 +5,7 @@ variable "aws_region" {
 
 variable "projectName" {
   description = "The name of the project"
-  default     = "tc4-lanchonete-customer"
+  default     = "tc4-lanchonete-v1"
 }
 
 variable "mongo_user" {

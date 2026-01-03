@@ -1,17 +1,25 @@
-resource "kubectl_manifest" "mongodb_statefulset" {
+resource "kubectl_manifest" "mongodb_deployment" {
   depends_on = [
     kubernetes_namespace.lanchonete_ns,
     kubectl_manifest.mongodb_service,
     kubectl_manifest.secrets
   ]
+
+  override_namespace = "tc4-customer"
+  wait               = true
+  wait_for_rollout   = true
+
+  timeouts {
+    create = "10m"
+  }
+
   yaml_body = <<YAML
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: mongodb
   namespace: tc4-customer
 spec:
-  serviceName: mongodb-service
   replicas: 1
   selector:
     matchLabels:
@@ -61,23 +69,19 @@ spec:
             - "db.adminCommand('ping')"
           initialDelaySeconds: 30
           periodSeconds: 10
+          timeoutSeconds: 10
         readinessProbe:
           exec:
             command:
             - mongosh
             - --eval
             - "db.adminCommand('ping')"
-          initialDelaySeconds: 5
+          initialDelaySeconds: 10
           periodSeconds: 5
-  volumeClaimTemplates:
-  - metadata:
-      name: mongodb-data
-    spec:
-      accessModes: ["ReadWriteOnce"]
-      storageClassName: gp2
-      resources:
-        requests:
-          storage: 10Gi
+          timeoutSeconds: 10
+      volumes:
+      - name: mongodb-data
+        emptyDir: {}
 
 YAML
 }
