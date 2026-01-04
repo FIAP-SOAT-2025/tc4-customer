@@ -306,6 +306,12 @@ go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
 go tool cover -html=coverage.txt
 ```
 
+### Evidência de Testes Unitários
+
+Os testes unitários são executados automaticamente via GitHub Actions em cada push e pull request, com cobertura de 99%.
+
+![Testes Unitários](assets/customer-test.png)
+
 ### Cobertura SonarCloud
 
 Este projeto usa SonarCloud para análise contínua de qualidade e cobertura de código. O relatório de cobertura é gerado automaticamente em cada push para `main` e em pull requests.
