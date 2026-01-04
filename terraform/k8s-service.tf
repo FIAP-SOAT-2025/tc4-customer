@@ -32,7 +32,7 @@ resource "kubernetes_service" "api_service_internal" {
     port {
       protocol    = "TCP"
       port        = 80
-      target_port = 3000
+      target_port = 8080
     }
     type = "ClusterIP"
   }
