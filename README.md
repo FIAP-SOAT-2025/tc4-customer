@@ -136,6 +136,13 @@ Content-Type: application/json
 }
 ```
 
+**curl example:**
+```bash
+curl -X POST http://localhost:8080/customer \
+  -H "Content-Type: application/json" \
+  -d '{"name": "John Doe", "cpf": "111.444.777-35", "email": "john@example.com"}'
+```
+
 **Response (201 Created):**
 ```json
 {
@@ -151,6 +158,11 @@ Content-Type: application/json
 ### Get Customer by CPF
 ```http
 GET /customer/:cpf
+```
+
+**curl example:**
+```bash
+curl http://localhost:8080/customer/11144477735
 ```
 
 **Response (200 OK):**
@@ -176,6 +188,13 @@ Content-Type: application/json
 }
 ```
 
+**curl example:**
+```bash
+curl -X PATCH http://localhost:8080/customer/your-customer-uuid \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Jane Doe", "email": "jane@example.com"}'
+```
+
 **Response (200 OK):**
 ```json
 {
@@ -193,11 +212,21 @@ Content-Type: application/json
 DELETE /customer/:id
 ```
 
+**curl example:**
+```bash
+curl -X DELETE http://localhost:8080/customer/your-customer-uuid
+```
+
 **Response (204 No Content)**
 
 ### Health Check
 ```http
 GET /health
+```
+
+**curl example:**
+```bash
+curl http://localhost:8080/health
 ```
 
 **Response (200 OK):**
@@ -276,6 +305,12 @@ docker stop mongodb-test && docker rm mongodb-test
 go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
 go tool cover -html=coverage.txt
 ```
+
+### SonarCloud Coverage
+
+This project uses SonarCloud for continuous code quality and coverage analysis. The coverage report is automatically generated on every push to `main` and on pull requests.
+
+![SonarCloud Coverage](assets/customer-sonar.png)
 
 ## Build
 
