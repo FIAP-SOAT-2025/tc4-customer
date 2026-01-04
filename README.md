@@ -13,6 +13,31 @@ Um microsserviço em Go para gerenciamento de clientes com MongoDB, extraído do
 - Suporte a Docker e docker-compose
 - Mesmos contratos de endpoint do serviço NestJS original
 
+## Justificativa da Stack
+
+### Por que Go?
+
+- **Performance**: Go compila para binários nativos, oferecendo tempo de inicialização extremamente rápido (~50ms) e baixo consumo de memória (~10-20MB), ideal para microsserviços em containers
+- **Ecossistema cloud-native**: Kubernetes, Docker e a maioria das ferramentas de infraestrutura moderna são escritas em Go
+- **Binário único**: Deploy simplificado sem necessidade de runtime ou dependências externas
+
+### Por que MongoDB?
+
+- **Modelo de dados flexível**: Documentos JSON permitem evolução do schema sem migrações complexas
+- **Escalabilidade horizontal**: Sharding nativo para distribuir dados entre múltiplos nós
+- **Performance em leituras**: Índices eficientes e suporte a queries por campos específicos como CPF
+- **Integração natural com Go**: Driver oficial com suporte a contextos e operações assíncronas
+- **Adequado para microsserviços**: Cada serviço pode ter seu próprio banco isolado, evitando acoplamento
+
+### Go + MongoDB para Microsserviços
+
+A combinação de Go e MongoDB é particularmente eficaz para microsserviços de domínio simples como gerenciamento de clientes:
+
+- **Baixa latência**: Resposta típica < 10ms para operações CRUD
+- **Custo operacional reduzido**: Menor consumo de recursos comparado a stacks como Node.js/PostgreSQL
+- **Containers leves**: Imagem Docker final com ~15MB
+- **Resiliência**: Reconexão automática e circuit breakers nativos no driver MongoDB
+
 ## Arquitetura
 
 ```
@@ -119,6 +144,12 @@ Defina estas como secrets do repositório:
 - `PORT` - Porta da aplicação
 - `DOCKER_USERNAME` - Nome de usuário do Docker Hub
 - `DOCKER_PASSWORD` - Senha/token do Docker Hub
+
+## Postman Collection
+
+Uma coleção do Postman está disponível em [`postman/tc4-customer.postman_collection.json`](postman/tc4-customer.postman_collection.json) com todos os endpoints da API, incluindo exemplos de requisições e respostas.
+
+Para importar: Abra o Postman → Import → selecione o arquivo JSON.
 
 ## Endpoints da API
 
@@ -402,3 +433,19 @@ make docker-up         # Iniciar serviços do docker-compose
 make docker-down       # Parar serviços do docker-compose
 make docker-logs       # Visualizar logs do docker-compose
 ```
+
+
+## 👥 Equipe
+
+| Nome | RM |
+|------|-----|
+| **Daniela Rêgo Lima de Queiroz** | RM361289 |
+| **Diana Bianca Santos Rodrigues** | RM361570 |
+| **Felipe Alves Teixeira** | RM362585 |
+| **Luiz Manoel Resplande Oliveira** | RM363920 |
+| **Thaís Lima de Oliveira Nobre** | RM362744 |
+
+
+## 📝 Licença
+
+Este projeto foi desenvolvido como parte do Tech Challenge da FIAP - Pós-graduação em Software Architecture.
