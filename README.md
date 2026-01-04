@@ -1,99 +1,99 @@
-# Customer Service Microservice
+# Microsserviço de Clientes
 
-A Go-based microservice for customer management with MongoDB, extracted from the NestJS TC2-G38 project.
+Um microsserviço em Go para gerenciamento de clientes com MongoDB, extraído do projeto NestJS TC2-G38.
 
-## Features
+## Funcionalidades
 
-- Clean Architecture with separation of concerns
-- Domain-driven design
-- CPF and Email validation
-- MongoDB as NoSQL database
-- RESTful API with Gin framework
-- Comprehensive unit and integration tests
-- Docker and docker-compose support
-- Same endpoint contracts as the original NestJS service
+- Arquitetura Limpa com separação de responsabilidades
+- Design orientado a domínio
+- Validação de CPF e Email
+- MongoDB como banco de dados NoSQL
+- API RESTful com framework Gin
+- Testes unitários e de integração abrangentes
+- Suporte a Docker e docker-compose
+- Mesmos contratos de endpoint do serviço NestJS original
 
-## Architecture
+## Arquitetura
 
 ```
 customer-service-go/
-├── api/              # Application entry point
+├── api/              # Ponto de entrada da aplicação
 ├── internal/
-│   ├── domain/          # Business entities and rules
-│   ├── usecase/         # Business logic
-│   ├── repository/      # Data persistence layer
-│   └── handler/         # HTTP handlers
+│   ├── domain/          # Entidades e regras de negócio
+│   ├── usecase/         # Lógica de negócio
+│   ├── repository/      # Camada de persistência de dados
+│   └── handler/         # Handlers HTTP
 ├── pkg/
-│   ├── validator/       # Validation utilities (CPF, Email)
-│   └── errors/          # Custom error types
-└── test/                # Integration tests
+│   ├── validator/       # Utilitários de validação (CPF, Email)
+│   └── errors/          # Tipos de erro customizados
+└── test/                # Testes de integração
 ```
 
-## Prerequisites
+## Pré-requisitos
 
-- Go 1.21 or higher
-- Docker and Docker Compose (for containerized deployment)
-- MongoDB 7.0+ (if running locally without Docker)
+- Go 1.21 ou superior
+- Docker e Docker Compose (para implantação em contêineres)
+- MongoDB 7.0+ (se executar localmente sem Docker)
 
-## Installation
+## Instalação
 
-### Using Docker Compose (Recommended)
+### Usando Docker Compose (Recomendado)
 
-1. Clone the repository and navigate to the service directory:
+1. Clone o repositório e navegue até o diretório do serviço:
 ```bash
 cd customer-service-go
 ```
 
-2. Create a `.env` file or use environment variables (see Configuration section)
+2. Crie um arquivo `.env` ou use variáveis de ambiente (veja a seção Configuração)
 
-3. Start the services:
+3. Inicie os serviços:
 ```bash
 docker-compose up -d
 ```
 
-The service will be available at `http://localhost:8080`
+O serviço estará disponível em `http://localhost:8080`
 
-### Local Development
+### Desenvolvimento Local
 
-1. Install dependencies:
+1. Instale as dependências:
 ```bash
 go mod download
 ```
 
-2. Copy environment file:
+2. Copie o arquivo de ambiente:
 ```bash
 cp .env.example .env
 ```
 
-3. Start MongoDB (if not using Docker):
+3. Inicie o MongoDB (se não estiver usando Docker):
 ```bash
 docker run -d -p 27017:27017 --name mongodb mongo:7.0
 ```
 
-4. Run the application:
+4. Execute a aplicação:
 ```bash
 go run api/main.go
 ```
 
-Or using Make:
+Ou usando Make:
 ```bash
 make run
 ```
 
-## Configuration
+## Configuração
 
-The service uses environment variables for configuration:
+O serviço usa variáveis de ambiente para configuração:
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `MONGODB_URI` | MongoDB connection URI | `mongodb://mongodb:27017` |
-| `MONGODB_DATABASE` | Database name | `customer_db` |
-| `MONGODB_PORT` | MongoDB port (for docker-compose) | `27017` |
-| `PORT` | Server port | `8080` |
+| Variável | Descrição | Padrão |
+|----------|-----------|--------|
+| `MONGODB_URI` | URI de conexão do MongoDB | `mongodb://mongodb:27017` |
+| `MONGODB_DATABASE` | Nome do banco de dados | `customer_db` |
+| `MONGODB_PORT` | Porta do MongoDB (para docker-compose) | `27017` |
+| `PORT` | Porta do servidor | `8080` |
 
-### Local Development
+### Desenvolvimento Local
 
-Create a `.env` file:
+Crie um arquivo `.env`:
 ```bash
 MONGODB_URI=mongodb://localhost:27017
 MONGODB_DATABASE=customer_db
@@ -101,106 +101,135 @@ MONGODB_PORT=27017
 PORT=8080
 ```
 
-### Production/CI/CD
+### Produção/CI/CD
 
-Set these as environment variables or GitHub secrets:
+Defina estas como variáveis de ambiente ou secrets do GitHub:
 ```bash
-export MONGODB_URI="mongodb://your-production-host:27017"
+export MONGODB_URI="mongodb://seu-host-de-producao:27017"
 export MONGODB_DATABASE="customer_db"
 export PORT="8080"
 ```
 
 ### GitHub Actions/CI
 
-Set these as repository secrets:
-- `MONGODB_URI` - Production MongoDB URI
-- `MONGODB_DATABASE` - Database name
-- `MONGODB_PORT` - MongoDB port
-- `PORT` - Application port
-- `DOCKER_USERNAME` - Docker Hub username
-- `DOCKER_PASSWORD` - Docker Hub password/token
+Defina estas como secrets do repositório:
+- `MONGODB_URI` - URI do MongoDB de produção
+- `MONGODB_DATABASE` - Nome do banco de dados
+- `MONGODB_PORT` - Porta do MongoDB
+- `PORT` - Porta da aplicação
+- `DOCKER_USERNAME` - Nome de usuário do Docker Hub
+- `DOCKER_PASSWORD` - Senha/token do Docker Hub
 
-## API Endpoints
+## Endpoints da API
 
-All endpoints maintain the same contracts as the original NestJS service.
+Todos os endpoints mantêm os mesmos contratos do serviço NestJS original.
 
-### Create Customer
+### Criar Cliente
 ```http
 POST /customer
 Content-Type: application/json
 
 {
-  "name": "John Doe",
+  "name": "João Silva",
   "cpf": "111.444.777-35",
-  "email": "john@example.com"
+  "email": "joao@exemplo.com"
 }
 ```
 
-**Response (201 Created):**
+**Exemplo com curl:**
+```bash
+curl -X POST http://localhost:8080/customer \
+  -H "Content-Type: application/json" \
+  -d '{"name": "João Silva", "cpf": "111.444.777-35", "email": "joao@exemplo.com"}'
+```
+
+**Resposta (201 Created):**
 ```json
 {
   "id": "uuid",
-  "name": "John Doe",
+  "name": "João Silva",
   "cpf": "11144477735",
-  "email": "john@example.com",
+  "email": "joao@exemplo.com",
   "createdAt": "2024-01-01T00:00:00Z",
   "updatedAt": "2024-01-01T00:00:00Z"
 }
 ```
 
-### Get Customer by CPF
+### Buscar Cliente por CPF
 ```http
 GET /customer/:cpf
 ```
 
-**Response (200 OK):**
+**Exemplo com curl:**
+```bash
+curl http://localhost:8080/customer/11144477735
+```
+
+**Resposta (200 OK):**
 ```json
 {
   "id": "uuid",
-  "name": "John Doe",
+  "name": "João Silva",
   "cpf": "11144477735",
-  "email": "john@example.com",
+  "email": "joao@exemplo.com",
   "createdAt": "2024-01-01T00:00:00Z",
   "updatedAt": "2024-01-01T00:00:00Z"
 }
 ```
 
-### Update Customer
+### Atualizar Cliente
 ```http
 PATCH /customer/:id
 Content-Type: application/json
 
 {
-  "name": "Jane Doe",
-  "email": "jane@example.com"
+  "name": "Maria Silva",
+  "email": "maria@exemplo.com"
 }
 ```
 
-**Response (200 OK):**
+**Exemplo com curl:**
+```bash
+curl -X PATCH http://localhost:8080/customer/seu-uuid-do-cliente \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Maria Silva", "email": "maria@exemplo.com"}'
+```
+
+**Resposta (200 OK):**
 ```json
 {
   "id": "uuid",
-  "name": "Jane Doe",
+  "name": "Maria Silva",
   "cpf": "11144477735",
-  "email": "jane@example.com",
+  "email": "maria@exemplo.com",
   "createdAt": "2024-01-01T00:00:00Z",
   "updatedAt": "2024-01-01T12:00:00Z"
 }
 ```
 
-### Delete Customer
+### Deletar Cliente
 ```http
 DELETE /customer/:id
 ```
 
-**Response (204 No Content)**
+**Exemplo com curl:**
+```bash
+curl -X DELETE http://localhost:8080/customer/seu-uuid-do-cliente
+```
 
-### Health Check
+**Resposta (204 No Content)**
+
+### Verificação de Saúde
 ```http
 GET /health
 ```
 
-**Response (200 OK):**
+**Exemplo com curl:**
+```bash
+curl http://localhost:8080/health
+```
+
+**Resposta (200 OK):**
 ```json
 {
   "status": "healthy",
@@ -208,156 +237,162 @@ GET /health
 }
 ```
 
-## Error Responses
+## Respostas de Erro
 
-All errors follow the same format as the NestJS service:
+Todos os erros seguem o mesmo formato do serviço NestJS:
 
 ```json
 {
-  "message": "Error description",
+  "message": "Descrição do erro",
   "statusCode": 400,
-  "error": "ERROR_CODE"
+  "error": "CODIGO_DO_ERRO"
 }
 ```
 
-### Error Codes
+### Códigos de Erro
 
-- `NAME_EMPTY` (400): Name cannot be empty
-- `INVALID_CPF` (400): Invalid CPF format
-- `INVALID_EMAIL` (400): Invalid email format
-- `CUSTOMER_ALREADY_EXISTS` (409): Customer with same CPF or email already exists
-- `CUSTOMER_NOT_FOUND` (404): Customer not found
-- `INTERNAL_ERROR` (500): Internal server error
+- `NAME_EMPTY` (400): O nome não pode estar vazio
+- `INVALID_CPF` (400): Formato de CPF inválido
+- `INVALID_EMAIL` (400): Formato de email inválido
+- `CUSTOMER_ALREADY_EXISTS` (409): Cliente com mesmo CPF ou email já existe
+- `CUSTOMER_NOT_FOUND` (404): Cliente não encontrado
+- `INTERNAL_ERROR` (500): Erro interno do servidor
 
-## Testing
+## Testes
 
-### Run All Tests
+### Executar Todos os Testes
 ```bash
 make test
 ```
 
-Or:
+Ou:
 ```bash
 go test -v ./...
 ```
 
-### Run Unit Tests Only
+### Executar Apenas Testes Unitários
 ```bash
 make test-unit
 ```
 
-Or:
+Ou:
 ```bash
 go test -v -short ./...
 ```
 
-### Run Integration Tests
+### Executar Testes de Integração
 
-Integration tests require MongoDB. You can run them with the provided script:
+Os testes de integração requerem MongoDB. Você pode executá-los com o script fornecido:
 
 ```bash
 ./test-integration.sh
 ```
 
-Or manually:
+Ou manualmente:
 ```bash
-# Start MongoDB for testing
+# Inicie o MongoDB para testes
 docker run -d --name mongodb-test -p 27018:27017 mongo:7.0
 
-# Run integration tests
+# Execute os testes de integração
 TEST_MONGODB_URI="mongodb://localhost:27018" go test -v -tags=integration ./internal/repository/
 
-# Cleanup
+# Limpeza
 docker stop mongodb-test && docker rm mongodb-test
 ```
 
-### Test Coverage
+### Cobertura de Testes
 ```bash
 go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
 go tool cover -html=coverage.txt
 ```
 
+### Cobertura SonarCloud
+
+Este projeto usa SonarCloud para análise contínua de qualidade e cobertura de código. O relatório de cobertura é gerado automaticamente em cada push para `main` e em pull requests.
+
+![Cobertura SonarCloud](assets/customer-sonar.png)
+
 ## Build
 
-### Build Binary
+### Build do Binário
 ```bash
 make build
 ```
 
-Or:
+Ou:
 ```bash
 go build -o bin/customer-service ./api
 ```
 
-### Build Docker Image
+### Build da Imagem Docker
 ```bash
 make docker-build
 ```
 
-Or:
+Ou:
 ```bash
 docker build -t customer-service .
 ```
 
-## Development
+## Desenvolvimento
 
-### Project Structure
+### Estrutura do Projeto
 
-- **api**: Application entry point and main function
-- **internal/domain**: Business entities (Customer, CPF, Email value objects)
-- **internal/usecase**: Business logic (Create, Update, Delete, GetByCPF)
-- **internal/repository**: Data access layer with MongoDB implementation
-- **internal/handler**: HTTP handlers and routing
-- **pkg/validator**: Reusable validation functions
-- **pkg/errors**: Custom error types
+- **api**: Ponto de entrada da aplicação e função main
+- **internal/domain**: Entidades de negócio (Customer, CPF, Email value objects)
+- **internal/usecase**: Lógica de negócio (Create, Update, Delete, GetByCPF)
+- **internal/repository**: Camada de acesso a dados com implementação MongoDB
+- **internal/handler**: Handlers HTTP e roteamento
+- **pkg/validator**: Funções de validação reutilizáveis
+- **pkg/errors**: Tipos de erro customizados
 
-### Adding New Features
+### Adicionando Novas Funcionalidades
 
-1. Define domain entities in `internal/domain`
-2. Create use cases in `internal/usecase`
-3. Implement repository methods in `internal/repository`
-4. Add HTTP handlers in `internal/handler`
-5. Update routes in `internal/handler/routes.go`
-6. Write tests for all layers
+1. Defina entidades de domínio em `internal/domain`
+2. Crie casos de uso em `internal/usecase`
+3. Implemente métodos do repositório em `internal/repository`
+4. Adicione handlers HTTP em `internal/handler`
+5. Atualize rotas em `internal/handler/routes.go`
+6. Escreva testes para todas as camadas
 
-## Migration from NestJS
+## Migração do NestJS
 
-This service maintains 100% API compatibility with the original NestJS customer module:
+Este serviço mantém 100% de compatibilidade de API com o módulo de clientes NestJS original:
 
-- Same endpoints: `POST /customer`, `GET /customer/:cpf`, `PATCH /customer/:id`, `DELETE /customer/:id`
-- Same request/response formats
-- Same validation rules (CPF, Email)
-- Same error codes and messages
-- Same business logic
+- Mesmos endpoints: `POST /customer`, `GET /customer/:cpf`, `PATCH /customer/:id`, `DELETE /customer/:id`
+- Mesmos formatos de requisição/resposta
+- Mesmas regras de validação (CPF, Email)
+- Mesmos códigos e mensagens de erro
+- Mesma lógica de negócio
 
-### Differences
+### Diferenças
 
-- **Database**: PostgreSQL → MongoDB
-- **Language**: TypeScript → Go
+- **Banco de Dados**: PostgreSQL → MongoDB
+- **Linguagem**: TypeScript → Go
 - **Framework**: NestJS → Gin
-- **Architecture**: Clean Architecture maintained in both
+- **Arquitetura**: Arquitetura Limpa mantida em ambos
 
-## Docker Compose Services
+## Serviços do Docker Compose
 
-The `docker-compose.yml` includes:
+O `docker-compose.yml` inclui:
 
-- **mongodb**: MongoDB 7.0 database
-- **customer-service**: The Go microservice
+- **mongodb**: Banco de dados MongoDB 7.0
+- **customer-service**: O microsserviço em Go
 
-Both services are connected via the `customer-network` bridge network.
+Ambos os serviços estão conectados via rede bridge `customer-network`.
 
-## Makefile Commands
+## Comandos do Makefile
 
 ```bash
-make help              # Show available commands
-make build             # Build the application
-make run               # Run the application locally
-make test              # Run all tests
-make test-unit         # Run unit tests only
-make test-integration  # Run integration tests
-make clean             # Clean build artifacts
-make docker-build      # Build Docker image
-make docker-up         # Start docker-compose services
-make docker-down       # Stop docker-compose services
-make docker-logs       # View docker-compose logs
+make help              # Mostrar comandos disponíveis
+make build             # Compilar a aplicação
+make run               # Executar a aplicação localmente
+make test              # Executar todos os testes
+make test-unit         # Executar apenas testes unitários
+make test-integration  # Executar testes de integração
+make clean             # Limpar artefatos de build
+make docker-build      # Compilar imagem Docker
+make docker-up         # Iniciar serviços do docker-compose
+make docker-down       # Parar serviços do docker-compose
+make docker-logs       # Visualizar logs do docker-compose
 ```
