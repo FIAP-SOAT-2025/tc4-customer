@@ -1,3 +1,8 @@
+// @title Customer Service API
+// @version 1.0
+// @description API para gerenciamento de clientes
+// @host localhost:8080
+// @BasePath /
 package main
 
 import (
@@ -11,6 +16,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	swaggerFiles "github.com/swaggo/files"
+	_ "customer-service/docs"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -79,6 +87,9 @@ func main() {
 
 	// Setup routes
 	handler.SetupRoutes(router, customerHandler)
+
+	// Swagger UI
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Start server
 	addr := fmt.Sprintf(":%s", port)

@@ -1,0 +1,172 @@
+basePath: /
+definitions:
+  domain.Customer:
+    properties:
+      cpf:
+        type: string
+      createdAt:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  handler.CreateCustomerRequest:
+    properties:
+      cpf:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+    required:
+    - cpf
+    - email
+    - name
+    type: object
+  handler.UpdateCustomerRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API para gerenciamento de clientes
+  title: Customer Service API
+  version: "1.0"
+paths:
+  /customer:
+    post:
+      consumes:
+      - application/json
+      description: Create a new customer with name, cpf and email
+      parameters:
+      - description: Customer to create
+        in: body
+        name: customer
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CreateCustomerRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Customer'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new customer
+      tags:
+      - customers
+  /customer/{cpf}:
+    get:
+      description: Returns a customer identified by CPF
+      parameters:
+      - description: CPF
+        in: path
+        name: cpf
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Customer'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get customer by CPF
+      tags:
+      - customers
+  /customer/{id}:
+    delete:
+      description: Delete a customer by ID
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a customer
+      tags:
+      - customers
+    patch:
+      consumes:
+      - application/json
+      description: Update customer's name and/or email
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Customer fields to update
+        in: body
+        name: customer
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UpdateCustomerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Customer'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update a customer
+      tags:
+      - customers
+swagger: "2.0"

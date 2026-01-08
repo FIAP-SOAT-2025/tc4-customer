@@ -40,6 +40,17 @@ type UpdateCustomerRequest struct {
 	Email *string `json:"email,omitempty"`
 }
 
+// CreateCustomer godoc
+// @Summary Create a new customer
+// @Description Create a new customer with name, cpf and email
+// @Tags customers
+// @Accept json
+// @Produce json
+// @Param customer body CreateCustomerRequest true "Customer to create"
+// @Success 201 {object} domain.Customer
+// @Failure 400 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /customer [post]
 func (h *CustomerHandler) CreateCustomer(c *gin.Context) {
 	var req CreateCustomerRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -60,6 +71,16 @@ func (h *CustomerHandler) CreateCustomer(c *gin.Context) {
 	c.JSON(http.StatusCreated, customer)
 }
 
+// GetCustomerByCPF godoc
+// @Summary Get customer by CPF
+// @Description Returns a customer identified by CPF
+// @Tags customers
+// @Produce json
+// @Param cpf path string true "CPF"
+// @Success 200 {object} domain.Customer
+// @Failure 404 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /customer/{cpf} [get]
 func (h *CustomerHandler) GetCustomerByCPF(c *gin.Context) {
 	cpf := c.Param("cpf")
 
@@ -72,6 +93,19 @@ func (h *CustomerHandler) GetCustomerByCPF(c *gin.Context) {
 	c.JSON(http.StatusOK, customer)
 }
 
+// UpdateCustomer godoc
+// @Summary Update a customer
+// @Description Update customer's name and/or email
+// @Tags customers
+// @Accept json
+// @Produce json
+// @Param id path string true "Customer ID"
+// @Param customer body UpdateCustomerRequest true "Customer fields to update"
+// @Success 200 {object} domain.Customer
+// @Failure 400 {object} map[string]interface{}
+// @Failure 404 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /customer/{id} [patch]
 func (h *CustomerHandler) UpdateCustomer(c *gin.Context) {
 	id := c.Param("id")
 
@@ -94,6 +128,15 @@ func (h *CustomerHandler) UpdateCustomer(c *gin.Context) {
 	c.JSON(http.StatusOK, customer)
 }
 
+// DeleteCustomer godoc
+// @Summary Delete a customer
+// @Description Delete a customer by ID
+// @Tags customers
+// @Param id path string true "Customer ID"
+// @Success 204
+// @Failure 404 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /customer/{id} [delete]
 func (h *CustomerHandler) DeleteCustomer(c *gin.Context) {
 	id := c.Param("id")
 
