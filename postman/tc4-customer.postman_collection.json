@@ -1,0 +1,336 @@
+{
+	"info": {
+		"_postman_id": "tc4-customer-api",
+		"name": "TC4 Customer API",
+		"description": "API collection for the TC4 Customer microservice. This service manages customer data including creation, retrieval, update, and deletion operations.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": ["{{baseUrl}}"],
+							"path": ["health"]
+						},
+						"description": "Check if the service is healthy and running."
+					},
+					"response": [
+						{
+							"name": "Healthy",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/health",
+									"host": ["{{baseUrl}}"],
+									"path": ["health"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"body": "{\n    \"status\": \"healthy\",\n    \"service\": \"customer-service\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Customer",
+			"item": [
+				{
+					"name": "Create Customer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Doe\",\n    \"cpf\": \"12345678909\",\n    \"email\": \"john.doe@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/customer",
+							"host": ["{{baseUrl}}"],
+							"path": ["customer"]
+						},
+						"description": "Create a new customer. All fields (name, cpf, email) are required. CPF must be a valid Brazilian CPF number."
+					},
+					"response": [
+						{
+							"name": "Customer Created",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"John Doe\",\n    \"cpf\": \"12345678909\",\n    \"email\": \"john.doe@example.com\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/customer",
+									"host": ["{{baseUrl}}"],
+									"path": ["customer"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"body": "{\n    \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n    \"name\": \"John Doe\",\n    \"cpf\": \"12345678909\",\n    \"email\": \"john.doe@example.com\",\n    \"createdAt\": \"2024-01-15T10:30:00Z\",\n    \"updatedAt\": \"2024-01-15T10:30:00Z\"\n}"
+						},
+						{
+							"name": "Invalid Request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"John Doe\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/customer",
+									"host": ["{{baseUrl}}"],
+									"path": ["customer"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"body": "{\n    \"message\": \"Invalid request body\",\n    \"statusCode\": 400,\n    \"error\": \"INVALID_REQUEST\"\n}"
+						},
+						{
+							"name": "Invalid CPF",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"John Doe\",\n    \"cpf\": \"00000000000\",\n    \"email\": \"john.doe@example.com\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/customer",
+									"host": ["{{baseUrl}}"],
+									"path": ["customer"]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"body": "{\n    \"message\": \"Invalid CPF\",\n    \"statusCode\": 400,\n    \"error\": \"INVALID_CPF\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Customer by CPF",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/customer/:cpf",
+							"host": ["{{baseUrl}}"],
+							"path": ["customer", ":cpf"],
+							"variable": [
+								{
+									"key": "cpf",
+									"value": "12345678909",
+									"description": "Customer CPF (numbers only)"
+								}
+							]
+						},
+						"description": "Retrieve a customer by their CPF number."
+					},
+					"response": [
+						{
+							"name": "Customer Found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/customer/12345678909",
+									"host": ["{{baseUrl}}"],
+									"path": ["customer", "12345678909"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"body": "{\n    \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n    \"name\": \"John Doe\",\n    \"cpf\": \"12345678909\",\n    \"email\": \"john.doe@example.com\",\n    \"createdAt\": \"2024-01-15T10:30:00Z\",\n    \"updatedAt\": \"2024-01-15T10:30:00Z\"\n}"
+						},
+						{
+							"name": "Customer Not Found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/customer/00000000000",
+									"host": ["{{baseUrl}}"],
+									"path": ["customer", "00000000000"]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"body": "{\n    \"message\": \"Customer not found\",\n    \"statusCode\": 404,\n    \"error\": \"CUSTOMER_NOT_FOUND\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Customer",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Updated\",\n    \"email\": \"john.updated@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/customer/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["customer", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "550e8400-e29b-41d4-a716-446655440000",
+									"description": "Customer UUID"
+								}
+							]
+						},
+						"description": "Update an existing customer. Both name and email fields are optional - only provided fields will be updated."
+					},
+					"response": [
+						{
+							"name": "Customer Updated",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"John Updated\",\n    \"email\": \"john.updated@example.com\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/customer/550e8400-e29b-41d4-a716-446655440000",
+									"host": ["{{baseUrl}}"],
+									"path": ["customer", "550e8400-e29b-41d4-a716-446655440000"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"body": "{\n    \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n    \"name\": \"John Updated\",\n    \"cpf\": \"12345678909\",\n    \"email\": \"john.updated@example.com\",\n    \"createdAt\": \"2024-01-15T10:30:00Z\",\n    \"updatedAt\": \"2024-01-15T11:00:00Z\"\n}"
+						},
+						{
+							"name": "Customer Not Found",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"John Updated\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/customer/invalid-id",
+									"host": ["{{baseUrl}}"],
+									"path": ["customer", "invalid-id"]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"body": "{\n    \"message\": \"Customer not found\",\n    \"statusCode\": 404,\n    \"error\": \"CUSTOMER_NOT_FOUND\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Customer",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/customer/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["customer", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "550e8400-e29b-41d4-a716-446655440000",
+									"description": "Customer UUID"
+								}
+							]
+						},
+						"description": "Delete a customer by their ID."
+					},
+					"response": [
+						{
+							"name": "Customer Deleted",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/customer/550e8400-e29b-41d4-a716-446655440000",
+									"host": ["{{baseUrl}}"],
+									"path": ["customer", "550e8400-e29b-41d4-a716-446655440000"]
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"body": ""
+						},
+						{
+							"name": "Customer Not Found",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/customer/invalid-id",
+									"host": ["{{baseUrl}}"],
+									"path": ["customer", "invalid-id"]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"body": "{\n    \"message\": \"Customer not found\",\n    \"statusCode\": 404,\n    \"error\": \"CUSTOMER_NOT_FOUND\"\n}"
+						}
+					]
+				}
+			]
+		}
+	]
+}
