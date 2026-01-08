@@ -13,12 +13,13 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	swaggerFiles "github.com/swaggo/files"
-	_ "customer-service/docs"
+	docs "customer-service/docs"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -88,8 +89,39 @@ func main() {
 	// Setup routes
 	handler.SetupRoutes(router, customerHandler)
 
-	// Swagger UI
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	// Configure Swagger defaults from environment (can be overridden per-request)
+	docs.SwaggerInfo.BasePath = getEnv("SWAGGER_BASEPATH", "/")
+	defaultSchemes := []string{"http"}
+	if s := os.Getenv("SWAGGER_SCHEMES"); s != "" {
+		defaultSchemes = strings.Split(s, ",")
+	} else if os.Getenv("ENV") == "production" {
+		defaultSchemes = []string{"https"}
+	}
+	docs.SwaggerInfo.Schemes = defaultSchemes
+
+	// Serve Swagger UI and set host/scheme dynamically from the incoming request
+	router.GET("/swagger/*any", func(c *gin.Context) {
+		// Prefer an explicit env override, otherwise use request Host
+		host := os.Getenv("SWAGGER_HOST")
+		if host == "" {
+			host = c.Request.Host
+		}
+		docs.SwaggerInfo.Host = host
+
+		// Determine scheme from X-Forwarded-Proto (common in AWS) or TLS
+		scheme := "http"
+		if proto := c.Request.Header.Get("X-Forwarded-Proto"); proto != "" {
+			parts := strings.Split(proto, ",")
+			scheme = strings.TrimSpace(parts[0])
+		} else if c.Request.TLS != nil {
+			scheme = "https"
+		} else if len(docs.SwaggerInfo.Schemes) > 0 {
+			scheme = docs.SwaggerInfo.Schemes[0]
+		}
+		docs.SwaggerInfo.Schemes = []string{scheme}
+
+		ginSwagger.WrapHandler(swaggerFiles.Handler)(c)
+	})
 
 	// Start server
 	addr := fmt.Sprintf(":%s", port)
