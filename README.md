@@ -80,6 +80,38 @@ Ou usando Make:
 make run
 ```
 
+---
+
+## Swagger / OpenAPI 📖
+
+Adicionei as anotações necessárias nos handlers e uma rota `/swagger/*any` que expõe a UI do Swagger.
+
+Passos para gerar a documentação e executar a UI localmente:
+
+1. Instale o gerador `swag` (CLI):
+```bash
+go install github.com/swaggo/swag/cmd/swag@latest
+```
+
+2. Instale as dependências de runtime para servir a UI:
+```bash
+go get -u github.com/swaggo/gin-swagger@latest github.com/swaggo/files@latest
+```
+
+3. Gere os arquivos de documentação (executar a partir do root do projeto):
+```bash
+swag init -g api/main.go -o docs
+```
+
+4. Rode a aplicação:
+```bash
+go run api/main.go
+```
+
+5. Acesse a UI em: `http://localhost:8080/swagger/index.html`
+
+Observação: criei um pacote `docs` mínimo para permitir builds locais mesmo antes de gerar usando `swag init`. Recomendo executar `swag init` para ter a documentação completa e atualizada.
+
 ## Configuração
 
 O serviço usa variáveis de ambiente para configuração:
