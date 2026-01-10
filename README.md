@@ -323,6 +323,11 @@ Todos os erros seguem o mesmo formato do serviço NestJS:
 
 ## Testes
 
+### BDD 
+
+Os cenários de teste estão documentados em formato BDD. Veja os cenários de comportamento em:
+- [`internal/domain/customer_test.go.feature`](internal/domain/customer_test.go.feature) - Especificação BDD dos testes de domínio
+
 ### Executar Todos os Testes
 ```bash
 make test
